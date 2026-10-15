@@ -57,3 +57,21 @@ function spaHeaders(): array
         'Referer' => 'http://localhost/login',
     ];
 }
+
+/**
+ * Create a user who has exactly these permissions (given directly, no role).
+ *
+ * @param  list<string>  $permissions
+ */
+function userWithPermissions(array $permissions = []): App\Models\User
+{
+    $user = App\Models\User::factory()->create();
+
+    foreach ($permissions as $permission) {
+        Spatie\Permission\Models\Permission::findOrCreate($permission, 'web');
+    }
+
+    $user->givePermissionTo($permissions);
+
+    return $user;
+}

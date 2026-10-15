@@ -7,6 +7,7 @@ import NotFound from '@/components/common/NotFound';
 import { useColorMode } from '@/components/ui/color-mode';
 import AppLayout from '@/layouts/AppLayout';
 import AuthLayout from '@/layouts/AuthLayout';
+import { accessRoutes } from '@/modules/access/routes';
 import { authGuestRoutes, authPrivateRoutes } from '@/modules/auth/routes';
 import { fetchMe } from '@/modules/auth/store/authSlice';
 import DashboardPage from '@/modules/dashboard/pages/DashboardPage';
@@ -15,7 +16,11 @@ import ProtectedRoute from '@/routes/ProtectedRoute';
 
 // Add each new module's routes to these lists
 const guestRoutes = [...authGuestRoutes];
-const privateRoutes = [{ path: '/dashboard', element: <DashboardPage /> }, ...authPrivateRoutes];
+const privateRoutes = [
+    { path: '/dashboard', element: <DashboardPage /> },
+    ...authPrivateRoutes,
+    ...accessRoutes,
+];
 
 export default function App() {
     const dispatch = useDispatch();

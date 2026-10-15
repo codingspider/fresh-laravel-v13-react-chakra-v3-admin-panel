@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Flex, HStack, IconButton, Stack, Text } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LuLogOut, LuMenu, LuUser, LuX } from 'react-icons/lu';
+import { LuChevronDown, LuLogOut, LuMenu, LuUser, LuX } from 'react-icons/lu';
 import { ColorModeButton } from '@/components/ui/color-mode';
 import menu from '@/config/menu';
 import usePermission from '@/hooks/usePermission';
@@ -13,37 +13,101 @@ import { toast } from '@/utils/toast';
 
 const SIDEBAR_WIDTH = '240px';
 
-// Sidebar links, filtered by permission
+// One link in the sidebar (orange when it is the current page)
+function MenuLink({ item, nested = false }) {
+    const Icon = item.icon;
+
+    return (
+        <NavLink to={item.path}>
+            {({ isActive }) => (
+                <HStack
+                    px="3"
+                    py="2"
+                    ps={nested ? '9' : '3'}
+                    rounded="md"
+                    fontWeight="medium"
+                    fontSize="sm"
+                    bg={isActive ? 'brand.subtle' : 'transparent'}
+                    color={isActive ? 'brand.fg' : 'app.text'}
+                    _hover={{ bg: 'brand.subtle' }}
+                >
+                    <Icon />
+                    <Text>{item.label}</Text>
+                </HStack>
+            )}
+        </NavLink>
+    );
+}
+
+// A group with child links, e.g. "User Management" -> Users, Roles & Permissions.
+// It opens by itself when one of its pages is the current page.
+function MenuGroup({ group, items }) {
+    const location = useLocation();
+    const hasActiveChild = items.some((item) => location.pathname.startsWith(item.path));
+    const [open, setOpen] = useState(hasActiveChild);
+    const Icon = group.icon;
+
+    // Open the group when the user moves to one of its pages
+    useEffect(() => {
+        if (hasActiveChild) setOpen(true);
+    }, [hasActiveChild]);
+
+    return (
+        <Box>
+            <HStack
+                as="button"
+                type="button"
+                w="full"
+                px="3"
+                py="2"
+                rounded="md"
+                fontWeight="medium"
+                fontSize="sm"
+                color={hasActiveChild ? 'brand.fg' : 'app.text'}
+                _hover={{ bg: 'brand.subtle' }}
+                aria-expanded={open}
+                onClick={() => setOpen(!open)}
+            >
+                <Icon />
+                <Text flex="1" textAlign="start">
+                    {group.label}
+                </Text>
+                <Box transform={open ? 'rotate(180deg)' : 'none'} transition="transform 0.2s">
+                    <LuChevronDown />
+                </Box>
+            </HStack>
+
+            {open && (
+                <Stack gap="1" mt="1">
+                    {items.map((item) => (
+                        <MenuLink key={item.path} item={item} nested />
+                    ))}
+                </Stack>
+            )}
+        </Box>
+    );
+}
+
+// Sidebar links and groups, filtered by permission
 function SidebarMenu() {
     const { can } = usePermission();
 
     return (
         <Stack gap="1" px="3">
-            {menu
-                .filter((item) => can(item.permission))
-                .map((item) => {
-                    const Icon = item.icon;
+            {menu.map((entry) => {
+                // A group: show only the children the user may see; hide the group if none
+                if (entry.children) {
+                    const items = entry.children.filter((child) => can(child.permission));
+                    if (items.length === 0) return null;
 
-                    return (
-                        <NavLink key={item.path} to={item.path}>
-                            {({ isActive }) => (
-                                <HStack
-                                    px="3"
-                                    py="2"
-                                    rounded="md"
-                                    fontWeight="medium"
-                                    fontSize="sm"
-                                    bg={isActive ? 'brand.subtle' : 'transparent'}
-                                    color={isActive ? 'brand.fg' : 'app.text'}
-                                    _hover={{ bg: 'brand.subtle' }}
-                                >
-                                    <Icon />
-                                    <Text>{item.label}</Text>
-                                </HStack>
-                            )}
-                        </NavLink>
-                    );
-                })}
+                    return <MenuGroup key={entry.label} group={entry} items={items} />;
+                }
+
+                // A plain link
+                if (!can(entry.permission)) return null;
+
+                return <MenuLink key={entry.path} item={entry} />;
+            })}
         </Stack>
     );
 }

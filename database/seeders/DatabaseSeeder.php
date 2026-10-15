@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Modules\Access\Database\Seeders\AccessDatabaseSeeder;
 use Modules\Auth\Database\Seeders\AuthDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AuthDatabaseSeeder::class, // super-admin role + first user
+            AccessDatabaseSeeder::class, // users / roles permissions + admin role
         ]);
     }
 }

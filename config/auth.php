@@ -42,6 +42,13 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Used by auth:sanctum (web cookie + Android token). It needs the "users" provider so
+        // spatie/laravel-permission knows which model has roles (e.g. Role::withCount('users')).
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
     ],
 
     /*

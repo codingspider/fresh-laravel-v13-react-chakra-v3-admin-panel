@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\BusinessException;
 use App\Support\ApiResponse;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -41,6 +42,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $isApi($request) || $request->expectsJson(),
         );
+
+        // A broken business rule thrown from a Service (e.g. "You cannot delete your own account")
+        $exceptions->render(function (BusinessException $e, Request $request) use ($isApi) {
+            if ($isApi($request)) {
+                return ApiResponse::error($e->getMessage(), $e->status);
+            }
+        });
 
         // 422 — validation failed
         $exceptions->render(function (ValidationException $e, Request $request) use ($isApi) {

@@ -1,0 +1,11 @@
+{
+    "name": "Access",
+    "alias": "access",
+    "description": "Users, roles and permissions (who can log in and what they can do).",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Access\\Providers\\AccessServiceProvider"
+    ],
+    "files": []
+}
