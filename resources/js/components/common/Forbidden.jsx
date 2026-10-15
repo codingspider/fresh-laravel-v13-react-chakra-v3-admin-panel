@@ -1,8 +1,10 @@
 import { Button, Center, Heading, Stack, Text } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import usePageTitle from '@/hooks/usePageTitle';
 
 // Shown when the user opens a page they have no permission for
 export default function Forbidden() {
+    usePageTitle('No permission');
     return (
         <Center py="20" px="4">
             <Stack align="center" gap="3" textAlign="center">

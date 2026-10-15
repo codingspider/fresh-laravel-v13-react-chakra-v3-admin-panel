@@ -6,8 +6,10 @@ import { getErrorMessage, setServerErrors } from '@/utils/errors';
 import { toast } from '@/utils/toast';
 import authApi from '../api/authApi';
 import { setUser } from '../store/authSlice';
+import usePageTitle from '@/hooks/usePageTitle';
 
 export default function LoginPage() {
+    usePageTitle('Log in');
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();

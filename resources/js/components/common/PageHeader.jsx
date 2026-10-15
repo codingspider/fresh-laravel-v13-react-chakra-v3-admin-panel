@@ -1,7 +1,14 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
+import usePageTitle from '@/hooks/usePageTitle';
 
-// Title at the top of every page, with optional buttons on the right
-export default function PageHeader({ title, description, actions }) {
+/*
+ * Title at the top of every page, with optional buttons on the right.
+ * It also sets the browser tab title (e.g. "Users | Amar Team").
+ * Pass documentTitle if the tab should show something different from the heading.
+ */
+export default function PageHeader({ title, description, actions, documentTitle }) {
+    usePageTitle(documentTitle ?? title);
+
     return (
         <Flex
             justify="space-between"

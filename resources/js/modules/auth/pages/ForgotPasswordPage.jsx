@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom';
 import { getErrorMessage, setServerErrors } from '@/utils/errors';
 import { toast } from '@/utils/toast';
 import authApi from '../api/authApi';
+import usePageTitle from '@/hooks/usePageTitle';
 
 export default function ForgotPasswordPage() {
+    usePageTitle('Forgot password');
     const [sentMessage, setSentMessage] = useState('');
 
     const {

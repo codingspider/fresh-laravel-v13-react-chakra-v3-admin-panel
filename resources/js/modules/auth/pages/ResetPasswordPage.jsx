@@ -4,9 +4,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getErrorMessage, setServerErrors } from '@/utils/errors';
 import { toast } from '@/utils/toast';
 import authApi from '../api/authApi';
+import usePageTitle from '@/hooks/usePageTitle';
 
 // Opened from the email link: /reset-password?token=...&email=...
 export default function ResetPasswordPage() {
+    usePageTitle('Set a new password');
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token') || '';
